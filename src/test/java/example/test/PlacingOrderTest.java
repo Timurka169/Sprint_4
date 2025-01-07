@@ -12,8 +12,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.junit.Assert.assertTrue;
 
-@RunWith(Parameterized.class)
+@RunWith(Parameterized.class)// указываем использование параметризованных тестов
 public class PlacingOrderTest {
+
 
     private WebDriver driver;
     private final int orderButtonPlace;
@@ -27,6 +28,7 @@ public class PlacingOrderTest {
     private final String scooterColor;
     private final String comment;
 
+    //конструктор для инцилизации параметров 
     public PlacingOrderTest(int orderButtonPlace, String userName, String userSurname, String address,
                             String subwayStation, String userPhone, String rentalStartDate, String rentalPeriod,
                             String scooterColor, String comment) {
@@ -42,6 +44,7 @@ public class PlacingOrderTest {
         this.comment = comment;
     }
 
+    //метод для предоставления параметров
     @Parameterized.Parameters
     public static Object[][] getInputData() {
         return new Object[][]{
@@ -61,40 +64,40 @@ public class PlacingOrderTest {
 
     @Test
     public void checkPlacingOrder() {
-        driver.get("https://qa-scooter.praktikum-services.ru/");
+        driver.get("https://qa-scooter.praktikum-services.ru/"); // Открываем страницу
 
-        MainPage objMainPage = new MainPage(driver);
-        OrderPage objOrderPage = new OrderPage(driver);
+        MainPage objMainPage = new MainPage(driver); // Создаем объект главной страницы
+        OrderPage objOrderPage = new OrderPage(driver);  // Создаем объект страницы оформления заказа
 
         // Кликаем на нужную кнопку заказа
         switch (orderButtonPlace) {
             case 1:
-                objMainPage.clickOrderUpperButton();
+                objMainPage.clickOrderUpperButton(); //кликаем на кнопку заказа в верхней части страницы
                 break;
             case 2:
-                objMainPage.clickOrderLowerButton();
+                objMainPage.clickOrderLowerButton(); //кликаем на кнопку заказа в нижней части страницы
                 break;
             default:
                 throw new IllegalArgumentException("Некорректное значение orderButtonPlace: " + orderButtonPlace);
         }
 
         // Принимаем куки (если это необходимо)
-        objMainPage.clickCookieAcceptButton();
+        objMainPage.clickCookieAcceptButton(); //кликаем на кнопку принятия куки
 
         // Заполняем информацию о пользователе
-        objOrderPage.waitForOrderAboutUserLabel();
-        objOrderPage.addUserInfoInOrder(userName, userSurname, address, subwayStation, userPhone);
+        objOrderPage.waitForOrderAboutUserLabel(); //ждем пока не появится надпись "Для кого самокат" .//div[text() = 'Для кого самокат
+        objOrderPage.addUserInfoInOrder(userName, userSurname, address, subwayStation, userPhone); //заполняем информацию о пользователе
 
         // Заполняем информацию об аренде
-        objOrderPage.waitForOrderAboutRentingLabel();
-        objOrderPage.addRentingInfoInOrder(rentalStartDate, rentalPeriod, scooterColor, comment);
+        objOrderPage.waitForOrderAboutRentingLabel(); //ждем появления надписи "О аренде"
+        objOrderPage.addRentingInfoInOrder(rentalStartDate, rentalPeriod, scooterColor, comment); //заполняем информацию об аренде
 
         // Подтверждаем заказ
-        objOrderPage.waitForOrderConfirmationLabel();
-        objOrderPage.clickOrderConfirmationButton();
+        objOrderPage.waitForOrderConfirmationLabel(); //ждем появления надписи "Подтверждение заказа"
+        objOrderPage.clickOrderConfirmationButton(); //кликаем на кнопку подтверждения заказа
 
         // Проверяем, что заказ был успешно оформлен
-        assertTrue("Заказ должен быть подтвержден", objOrderPage.isOrderConfirmed());
+        assertTrue("Заказ должен быть подтвержден", objOrderPage.isOrderConfirmed()); //проверяем, что заказ подтвержден
     }
 
     @After

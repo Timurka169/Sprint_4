@@ -44,9 +44,10 @@ public class OrderPage {
         driver.findElement(orderAddressField).sendKeys(address);
     }
 
-    public void setOrderSubwayStation(String subwayStation) {
+    public void setOrderSubwayStation(String subwayStation) { // нужно починить ввод станции метро клик потом ввод
+        driver.findElement(orderSubwayStationField).click();
         driver.findElement(orderSubwayStationField).sendKeys(subwayStation);
-        driver.findElement(orderSubwayStationField).sendKeys(Keys.ENTER);
+        driver.findElement(By.xpath(".//div[@class='select-search__select']//div[text()='" + subwayStation + "']")).click();
     }
 
     public void setOrderPhone(String phone) {
@@ -68,7 +69,7 @@ public class OrderPage {
 
     public void waitForOrderAboutUserLabel() {
         new WebDriverWait(driver, Duration.ofSeconds(20))
-                .until(ExpectedConditions.visibilityOfElementLocated(orderAboutUserLabel));
+                .until(ExpectedConditions.visibilityOfElementLocated(orderAboutUserLabel));//ждем пока не появится надпись "Для кого самокат" .//div[text() = 'Для кого самокат
     }
 
     public void waitForOrderAboutRentingLabel() {
@@ -112,7 +113,7 @@ public class OrderPage {
                 .until(ExpectedConditions.visibilityOfElementLocated(orderConfirmationLabel));
     }
 
-    public void clickOrderConfirmationButton() {
+    public void clickOrderConfirmationButton() { //кликаем на кнопку подтверждения заказа
         driver.findElement(orderConfirmationButton).click();
     }
 
