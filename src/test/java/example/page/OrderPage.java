@@ -26,6 +26,8 @@ public class OrderPage {
     private final By orderConfirmationLabel = By.xpath(".//div[text() = 'Хотите оформить заказ?']");
     private final By orderConfirmationButton = By.xpath(".//button[text() = 'Да']");
     private final By orderConfirmedLabel = By.className("Order_ModalHeader__3FDaJ");
+    private final By orderScooterColorBlack = By.id("black");
+    private final By orderScooterColorGrey = By.id("grey");
 
 
     public OrderPage(WebDriver driver) {
@@ -44,7 +46,7 @@ public class OrderPage {
         driver.findElement(orderAddressField).sendKeys(address);
     }
 
-    public void setOrderSubwayStation(String subwayStation) { // нужно починить ввод станции метро клик потом ввод
+    public void setOrderSubwayStation(String subwayStation) { 
         driver.findElement(orderSubwayStationField).click();
         driver.findElement(orderSubwayStationField).sendKeys(subwayStation);
         driver.findElement(By.xpath(".//div[@class='select-search__select']//div[text()='" + subwayStation + "']")).click();
@@ -88,8 +90,16 @@ public class OrderPage {
     }
 
     public void setOrderScooterColor(String scooterColor) {
-        // Assuming the checkbox color has a unique value
-        driver.findElement(By.xpath("//input[@value='" + scooterColor + "']")).click();
+        switch (scooterColor.toLowerCase()) {
+            case "чёрный":
+                driver.findElement(orderScooterColorBlack).click();
+                break;
+            case "серый":
+                driver.findElement(orderScooterColorGrey).click();
+                break;
+            default:
+                throw new IllegalArgumentException("Некорректный цвет самоката: " + scooterColor);
+        }
     }
 
     public void setOrderComment(String comment) {
@@ -103,7 +113,7 @@ public class OrderPage {
     public void addRentingInfoInOrder(String startDate, String rentalPeriod, String scooterColor, String comment) {
         setOrderStartDate(startDate);
         setOrderRentalPeriod(rentalPeriod);
-        setOrderScooterColor(scooterColor);
+        setOrderScooterColor(scooterColor); //ошибка в методе setOrderScooterColor
         setOrderComment(comment);
         clickMoveToConfirmationOrderButton();
     }
