@@ -1,23 +1,17 @@
 package example.test;
 
 import example.page.MainPage;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.hamcrest.MatcherAssert;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class FaqAccordionTest {
+public class FaqAccordionTest extends BaseTest {
 
-    private WebDriver driver;
     private final int faqAccordionItemIndex;
     private final boolean faqAccordionItemPanelHiddenExpected;
     private final String faqAccordionItemPanelTextExpected;
@@ -42,25 +36,13 @@ public class FaqAccordionTest {
         };
     }
 
-    @Before
-    public void startUp() {
-
-        WebDriverManager.chromedriver().setup();
-    }
-
     @Test
     public void checkAccordionExpand() {
-        // Указываем путь к geckodriver.exe
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\12tim\\IdeaProjects\\test4\\src\\main\\resources\\geckodriver.exe");
-
-        // Инициализируем драйвер
-        driver = new FirefoxDriver();
         driver.get("https://qa-scooter.praktikum-services.ru/");
 
         MainPage objMainPage = new MainPage(driver);
         objMainPage.clickCookieAcceptButton();
 
-        // Click accordion item and check visibility and text
         objMainPage.clickFaqAccordionItemHeading(faqAccordionItemIndex);
 
         boolean visibleActual = Boolean.parseBoolean(objMainPage.getFaqAccordionItemPanelElement(faqAccordionItemIndex).getAttribute("hidden"));
@@ -68,10 +50,5 @@ public class FaqAccordionTest {
 
         String textActual = objMainPage.getFaqAccordionItemPanelTextElement(faqAccordionItemIndex).getText();
         MatcherAssert.assertThat("Проверка текста панели FAQ", textActual, containsString(faqAccordionItemPanelTextExpected));
-    }
-
-    @After
-    public void teardown() {
-        driver.quit();
     }
 }

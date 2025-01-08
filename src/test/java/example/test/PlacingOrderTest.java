@@ -2,21 +2,15 @@ package example.test;
 
 import example.page.MainPage;
 import example.page.OrderPage;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.junit.Assert.assertTrue;
 
-@RunWith(Parameterized.class)// указываем использование параметризованных тестов
-public class PlacingOrderTest {
+@RunWith(Parameterized.class)
+public class PlacingOrderTest extends BaseTest {
 
-
-    private WebDriver driver;
     private final int orderButtonPlace;
     private final String userName;
     private final String userSurname;
@@ -28,7 +22,6 @@ public class PlacingOrderTest {
     private final String scooterColor;
     private final String comment;
 
-    //конструктор для инцилизации параметров 
     public PlacingOrderTest(int orderButtonPlace, String userName, String userSurname, String address,
                             String subwayStation, String userPhone, String rentalStartDate, String rentalPeriod,
                             String scooterColor, String comment) {
@@ -44,7 +37,6 @@ public class PlacingOrderTest {
         this.comment = comment;
     }
 
-    //метод для предоставления параметров
     @Parameterized.Parameters
     public static Object[][] getInputData() {
         return new Object[][]{
@@ -53,57 +45,33 @@ public class PlacingOrderTest {
         };
     }
 
-    @Before
-    public void startUp() {
-        // Указываем путь к geckodriver.exe
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\12tim\\IdeaProjects\\test4\\src\\main\\resources\\geckodriver.exe");
-
-        // Инициализируем драйвер
-        driver = new FirefoxDriver();
-    }
-
     @Test
     public void checkPlacingOrder() {
-        driver.get("https://qa-scooter.praktikum-services.ru/"); // Открываем страницу
+        driver.get(BASE_URL);
 
-        MainPage objMainPage = new MainPage(driver); // Создаем объект главной страницы
-        OrderPage objOrderPage = new OrderPage(driver);  // Создаем объект страницы оформления заказа
+        MainPage objMainPage = new MainPage(driver);
+        OrderPage objOrderPage = new OrderPage(driver);
 
-        // Кликаем на нужную кнопку заказа
         switch (orderButtonPlace) {
             case 1:
-                objMainPage.clickOrderUpperButton(); //кликаем на кнопку заказа в верхней части страницы
+                objMainPage.clickOrderUpperButton();
                 break;
             case 2:
-                objMainPage.clickOrderLowerButton(); //кликаем на кнопку заказа в нижней части страницы
+                objMainPage.clickOrderLowerButton();
                 break;
             default:
                 throw new IllegalArgumentException("Некорректное значение orderButtonPlace: " + orderButtonPlace);
         }
 
-        // Принимаем куки (если это необходимо)
-        objMainPage.clickCookieAcceptButton(); //кликаем на кнопку принятия куки
-
-        // Заполняем информацию о пользователе
-        objOrderPage.waitForOrderAboutUserLabel(); //ждем пока не появится надпись "Для кого самокат" .//div[text() = 'Для кого самокат
-        objOrderPage.addUserInfoInOrder(userName, userSurname, address, subwayStation, userPhone); //заполняем информацию о пользователе
-
-        // Заполняем информацию об аренде
-        objOrderPage.waitForOrderAboutRentingLabel(); //ждем появления надписи "О аренде"
-        objOrderPage.addRentingInfoInOrder(rentalStartDate, rentalPeriod, scooterColor, comment); //заполняем информацию об аренде
-
-        // Подтверждаем заказ
-        objOrderPage.waitForOrderConfirmationLabel(); //ждем появления надписи "Подтверждение заказа"
-        objOrderPage.clickOrderConfirmationButton(); //кликаем на кнопку подтверждения заказа
-
-        // Проверяем, что заказ был успешно оформлен
-        assertTrue("Заказ должен быть подтвержден", objOrderPage.isOrderConfirmed()); //проверяем, что заказ подтвержден
-    }
-
-    @After
-    public void teardown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        objMainPage.clickCookieAcceptButton();
+        objOrderPage.waitForOrderAboutUserLabel();
+        objOrderPage.addUserInfoInOrder(userName, userSurname, address, subwayStation, userPhone);
+        objOrderPage.waitForOrderAboutRentingLabel();
+        objOrderPage.addRentingInfoInOrder(rentalStartDate, rentalPeriod, scooterColor, comment);
+        objOrderPage.waitForOrderConfirmationLabel();
+        objOrderPage.clickOrderConfirmationButton();
+        
+        //проверка текста сообщения Заказ оформлен
+        assertTrue("Заказ должен быть оформлен", objOrderPage.isOrderConfirmed());
     }
 }

@@ -25,7 +25,7 @@ public class OrderPage {
     private final By orderMoveToConfirmOrderButton = By.xpath(".//div[@class='Order_Buttons__1xGrp']/button[text() = 'Заказать']");
     private final By orderConfirmationLabel = By.xpath(".//div[text() = 'Хотите оформить заказ?']");
     private final By orderConfirmationButton = By.xpath(".//button[text() = 'Да']");
-    private final By orderConfirmedLabel = By.className("Order_ModalHeader__3FDaJ");
+    private final By orderConfirmedMessage = By.xpath(".//div[@class='Order_ModalHeader__3FDaJ' and contains(text(), 'Заказ оформлен')]");
     private final By orderScooterColorBlack = By.id("black");
     private final By orderScooterColorGrey = By.id("grey");
 
@@ -113,7 +113,7 @@ public class OrderPage {
     public void addRentingInfoInOrder(String startDate, String rentalPeriod, String scooterColor, String comment) {
         setOrderStartDate(startDate);
         setOrderRentalPeriod(rentalPeriod);
-        setOrderScooterColor(scooterColor); //ошибка в методе setOrderScooterColor
+        setOrderScooterColor(scooterColor); 
         setOrderComment(comment);
         clickMoveToConfirmationOrderButton();
     }
@@ -126,12 +126,13 @@ public class OrderPage {
     public void clickOrderConfirmationButton() { //кликаем на кнопку подтверждения заказа
         driver.findElement(orderConfirmationButton).click();
     }
-
+    
+    //проверяем, что заказ оформлен (появилось сообщение "Заказ оформлен")
     public boolean isOrderConfirmed() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(orderConfirmedLabel));
-            return driver.findElement(orderConfirmedLabel).isDisplayed();
+            wait.until(ExpectedConditions.visibilityOfElementLocated(orderConfirmedMessage));
+            return driver.findElement(orderConfirmedMessage).isDisplayed();
         } catch (Exception e) {
             return false; // Возвращает false, если элемент не найден или не отображён
         }
